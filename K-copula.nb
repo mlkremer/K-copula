@@ -1,7 +1,7 @@
-(*Standard normal CDF (\[CapitalPhi]),
-marginal CDF and PDF of the K-distribution (Fm, fm),
-joint (bivariate) CDF and PDF of the K-distribution (Fj, fj):*)
+(*Standard normal CDF*)
 \[CapitalPhi][x_] := 1/2 + 1/2 Erf[x/Sqrt[2]];
+
+(*Marginal CDF (Fm) and PDF (fm) of the K-distribution*)
 Fm[x_, m_] := 
   1/Gamma[m/2] NIntegrate[
     z^(m/2 - 1) Exp[-z] \[CapitalPhi][x Sqrt[m/(2 z)]], {z, 0, 
@@ -10,29 +10,27 @@ fm[x_, m_] :=
   1/Gamma[m/2] NIntegrate[
     z^(m/2 - 1) Exp[-z] Exp[-m/(4 z) x^2]/Sqrt[4 \[Pi] z/m], {z, 0, 
      Infinity}];
+
+(*Joint (bivariate) CDF (Fj) and PDF (fj) of the K-distribution*)
 Fj[x_, y_, m_, c_] := 
   1/Gamma[m/2] NIntegrate[
     z^(m/2 - 1) Exp[-z] 1/Sqrt[1 - c^2]  m/(4 \[Pi] z)
       Exp[-(m/(4 z)) (\[Xi]^2 - 2 c \[Xi] \[Zeta] + \[Zeta]^2)/(
        1 - c^2)], {z, 0, \[Infinity]}, {\[Xi], -\[Infinity], 
      x}, {\[Zeta], -\[Infinity], y}, 
-    PrecisionGoal -> 5];(*PrecisionGoal\[Rule]6*)
-
+    PrecisionGoal -> 5]; (*PrecisionGoal -> 6*)
 fj[x_, y_, m_, c_] := 
   1/Gamma[m/2] NIntegrate[
     z^(m/2 - 1) Exp[-z] 1/Sqrt[1 - c^2]  m/(4 \[Pi] z)
       Exp[-(m/(4 z)) (x^2 - 2 c x y + y^2)/(1 - c^2)], {z, 
      0, \[Infinity]}];
 
-(*Bivariate K-copula (CDF):*)
+(*Bivariate K-copula (CDF)*)
 KCopulaCDF[c_, N_, BinSize_] := Block[{b = BinSize, m = N},
-  Clear@Fmi; (*necessary since Fmi works with Caching*)
-  
+  Clear@Fmi; (*necessary since Fmi works with Caching*)  
   tab = Table[{Fm[x, m], x}, {x, -4., 4., 
-     0.1}]; (*sufficient for m \[Element] [0.1,500] (i.e. 
-  always)*)
-  (*inverse marginal CDF of the K-distribution*)
-  
+     0.1}]; (*sufficient for m \[Element] [0.1,500] (i.e. always)*)
+  (*Inverse marginal CDF of the K-distribution*)
   Fmi[u_] := Fmi[u] = 
     Piecewise[{{-\[Infinity], u == 0}, {\[Infinity], u == 1}}, 
      Interpolation[tab][u]];
@@ -40,22 +38,24 @@ KCopulaCDF[c_, N_, BinSize_] := Block[{b = BinSize, m = N},
   ParallelTable[Table[CopulaCDF[u, v], {v, 0, 1, b}], {u, 0, 1, b}]
   ]
   
-(*Bivariate K-copula density (PDF):*)
+(*Bivariate K-copula density (PDF)*)
 KCopulaPDF[c_, N_, BinSize_] := 
  Differences[KCopulaCDF[c, N, BinSize], {1, 1}]/b^2
  
 (*Auxiliary function: expands an array so that ListPlot3D correctly 
-represents plots at the edges with option InterpolationOrder->0.*)
+represents plots at the edges with option InterpolationOrder -> 0.*)
 handicap[arr_] := {arr1 = Transpose@Append[arr, Last@arr]; 
   Transpose@Append[arr1, Last@arr1]}
+
 (*BinSize and DataRange*)
 b = 0.05;
 dr = {{b/2, 1 - b/2}, {b/2, 1 - b/2}};
+
 (*Parameters for K-copula*)
 c = 0.39;
 m = 7.8;
 
-(*Calculate K-copula PDF:*)
+(*Calculate K-copula PDF*)
 kcopPDF = KCopulaPDF[c, m, b];
 maxkcopPDF = Max@kcopPDF; (*maximum value for PlotRange*)
 
@@ -72,7 +72,7 @@ StyleBox[\"v\",\nFontSlant->\"Italic\"]\)", ""},
  InterpolationOrder -> 0, Filling -> Bottom, 
  FillingStyle -> GrayLevel[1], Mesh -> None]
  
-(*Calculate K-copula CDF:*)
+(*Calculate K-copula CDF*)
 kcopCDF = KCopulaCDF[c, m, b];
 
 (*Plot K-copula CDF*)
