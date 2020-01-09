@@ -47,6 +47,9 @@ represents plots at the edges with option InterpolationOrder -> 0.*)
 handicap[arr_] := {arr1 = Transpose@Append[arr, Last@arr]; 
   Transpose@Append[arr1, Last@arr1]}
 
+
+(*EXAMPLES*)
+
 (*BinSize and DataRange*)
 b = 0.05;
 dr = {{b/2, 1 - b/2}, {b/2, 1 - b/2}};
