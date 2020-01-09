@@ -60,6 +60,21 @@ dr = {{b/2, 1 - b/2}, {b/2, 1 - b/2}};
 c = 0.39;
 m = 7.8;
 
+(*Calculate K-copula CDF*)
+kcopCDF = KCopulaCDF[c, m, b];
+
+(*Plot K-copula CDF*)
+ListPlot3D[handicap@kcopCDF[[2;;,2;;]], PlotRange -> {-0.0001, 1}, 
+ DataRange -> dr, 
+ ColorFunction -> Function[{x, y, z}, ColorData["Rainbow"][z]],
+ ColorFunctionScaling -> False, 
+ AxesStyle -> Directive[Black, Thickness@0.002, 16], 
+ AxesLabel -> {"\!\(\*
+StyleBox[\"u\",\nFontSlant->\"Italic\"]\)", "  \!\(\*
+StyleBox[\"v\",\nFontSlant->\"Italic\"]\)", ""}, 
+ InterpolationOrder -> 0, Filling -> Bottom, 
+ FillingStyle -> GrayLevel[1], Mesh -> None]
+
 (*Calculate K-copula PDF*)
 kcopPDF = KCopulaPDF[c, m, b];
 maxkcopPDF = Max@kcopPDF; (*maximum value for PlotRange*)
@@ -69,21 +84,6 @@ ListPlot3D[handicap@kcopPDF, PlotRange -> {0, maxkcopPDF},
  DataRange -> dr, 
  ColorFunction -> 
   Function[{x, y, z}, ColorData["Rainbow"][z/maxkcopPDF]],
- ColorFunctionScaling -> False, 
- AxesStyle -> Directive[Black, Thickness@0.002, 16], 
- AxesLabel -> {"\!\(\*
-StyleBox[\"u\",\nFontSlant->\"Italic\"]\)", "  \!\(\*
-StyleBox[\"v\",\nFontSlant->\"Italic\"]\)", ""}, 
- InterpolationOrder -> 0, Filling -> Bottom, 
- FillingStyle -> GrayLevel[1], Mesh -> None]
- 
-(*Calculate K-copula CDF*)
-kcopCDF = KCopulaCDF[c, m, b];
-
-(*Plot K-copula CDF*)
-ListPlot3D[handicap@kcopCDF, PlotRange -> {-0.0001, 1}, 
- DataRange -> dr, 
- ColorFunction -> Function[{x, y, z}, ColorData["Rainbow"][z]],
  ColorFunctionScaling -> False, 
  AxesStyle -> Directive[Black, Thickness@0.002, 16], 
  AxesLabel -> {"\!\(\*
